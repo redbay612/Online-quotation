@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收多易迷你倉庫 - 租金計算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f3f7fa; font-family: "Microsoft JhengHei", sans-serif; }
+        .brand-bg { background-color: #1a4571; }
+        .input-focus:focus { border-color: #1a4571; outline: none; ring: 1px #1a4571; }
+    </style>
+</head>
+<body class="pb-10">
+
+    <!-- 頂部藍色區塊 -->
+    <div class="brand-bg w-full h-48 flex justify-center items-center">
+        <div class="bg-white p-2 rounded-lg shadow-lg">
+            <div class="text-center">
+                <div class="text-2xl font-bold text-blue-900 leading-tight">收多易</div>
+                <div class="bg-blue-900 text-white text-xs px-1 tracking-widest">迷你倉庫</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="max-w-4xl mx-auto -mt-10 px-4">
+        <div class="bg-white rounded-xl shadow-md p-6 md:p-8">
+            
+            <!-- 表單輸入區 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">客戶名稱</label>
+                    <input type="text" id="custName" placeholder="輸入客戶名稱" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">聯繫電話</label>
+                    <input type="text" id="custPhone" placeholder="輸入聯繫電話" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">材積</label>
+                    <select id="size" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
+                        <option value="0">請選擇材積</option>
+                        <option value="1000">小型倉庫 (1000元/月)</option>
+                        <option value="2000">中型倉庫 (2000元/月)</option>
+                        <option value="4000">大型倉庫 (4000元/月)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">優惠方案</label>
+                    <select id="promo" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
+                        <option value="1">請選擇優惠方案</option>
+                        <option value="0.9">年繳 9 折</option>
+                        <option value="0.95">半年繳 95 折</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">承租月份</label>
+                    <select id="months" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
+                        <option value="0">請選擇月份數</option>
+                        <option value="1">1 個月</option>
+                        <option value="3">3 個月</option>
+                        <option value="6">6 個月</option>
+                        <option value="12">12 個月</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 動態顯示資訊 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t pt-4">
+                <div>
+                    <div class="text-gray-500 text-sm font-bold">保證金</div>
+                    <div class="flex items-center gap-2 mt-1 text-gray-600">
+                        <span id="depositText">未選擇月份</span>
+                        <label class="flex items-center text-xs ml-2 cursor-pointer">
+                            <input type="checkbox" id="renew" class="mr-1"> 續約免付
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-gray-500 text-sm font-bold">保險文書處理費</div>
+                    <div class="mt-1 text-gray-600" id="feeText">未選擇月份</div>
+                </div>
+            </div>
+
+            <!-- 小計與按鈕 -->
+            <div class="mt-8 bg-blue-50 rounded-xl p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="bg-[#1a4571] p-3 rounded-lg text-white">
+                        <i class="fa-solid fa-calculator text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-xs">小計金額 (月租金 + 保險費) × 月份 + 保證金</div>
+                        <div class="text-3xl font-bold text-[#1a4571]">$ <span id="totalDisplay">0</span></div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="resetForm()" class="bg-white border border-gray-300 p-3 rounded-lg hover:bg-gray-50 shadow-sm">
+                        <i class="fa-solid fa-rotate-right text-gray-600"></i>
+                    </button>
+                    <button onclick="saveToHistory()" class="bg-[#1a4571] text-white px-6 py-3 rounded-lg hover:bg-blue-900 shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> 保存紀錄
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 歷史紀錄表格 -->
+        <div class="mt-8">
+            <div class="flex items-center gap-2 text-gray-700 font-bold mb-4">
+                <i class="fa-solid fa-database"></i> 歷史請款紀錄
+                <span class="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full" id="recordCount">0 筆</span>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 text-gray-600 text-sm">
+                        <tr>
+                            <th class="p-4 border-b">日期</th>
+                            <th class="p-4 border-b">客戶名稱</th>
+                            <th class="p-4 border-b">材積/方案</th>
+                            <th class="p-4 border-b">租期</th>
+                            <th class="p-4 border-b text-right">總金額</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable" class="text-gray-700">
+                        <!-- 動態插入數據 -->
+                    </tbody>
+                </table>
+                <div id="noData" class="p-10 text-center text-gray-400">暫無數據</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 設定常數
+        const INSURANCE_FEE_PER_MONTH = 100; // 假設每月保險費
+        const DEPOSIT_RATE = 2; // 假設保證金為2個月租金
+
+        const inputs = ['size', 'promo', 'months', 'renew'];
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('change', calculate);
+        });
+
+        function calculate() {
+            const sizePrice = parseFloat(document.getElementById('size').value);
+            const promoRate = parseFloat(document.getElementById('promo').value);
+            const months = parseInt(document.getElementById('months').value);
+            const renew = document.getElementById('renew').checked;
+
+            if (sizePrice === 0 || months === 0) {
+                updateUI(0, 0, 0);
+                return;
+            }
+
+            // 計算邏輯
+            const monthlyRent = sizePrice * promoRate;
+            const totalInsurance = INSURANCE_FEE_PER_MONTH * months;
+            const deposit = renew ? 0 : (sizePrice * DEPOSIT_RATE);
+            const total = (monthlyRent * months) + totalInsurance + deposit;
+
+            updateUI(total, deposit, totalInsurance);
+        }
+
+        function updateUI(total, deposit, insurance) {
+            document.getElementById('totalDisplay').innerText = total.toLocaleString();
+            document.getElementById('depositText').innerText = deposit > 0 ? `$${deposit.toLocaleString()}` : (deposit === 0 && document.getElementById('renew').checked ? '續約免付' : '未選擇月份');
+            document.getElementById('feeText').innerText = insurance > 0 ? `$${insurance.toLocaleString()}` : '未選擇月份';
+        }
+
+        let records = [];
+        function saveToHistory() {
+            const name = document.getElementById('custName').value;
+            const total = document.getElementById('totalDisplay').innerText;
+            const size = document.getElementById('size').options[document.getElementById('size').selectedIndex].text;
+            const months = document.getElementById('months').value;
+
+            if (!name || total === '0') {
+                alert('請完整填寫客戶名稱與選擇租賃條件');
+                return;
+            }
+
+            const now = new Date().toLocaleDateString();
+            const newRecord = { date: now, name, size, months, total };
+            records.unshift(newRecord); // 新增在最前面
+
+            renderTable();
+            resetForm();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('historyTable');
+            const noData = document.getElementById('noData');
+            const count = document.getElementById('recordCount');
+            
+            tbody.innerHTML = '';
+            count.innerText = `${records.length} 筆`;
+
+            if (records.length === 0) {
+                noData.classList.remove('hidden');
+            } else {
+                noData.classList.add('hidden');
+                records.forEach(r => {
+                    const row = `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-4 text-sm text-gray-500">${r.date}</td>
+                            <td class="p-4 font-medium">${r.name}</td>
+                            <td class="p-4 text-sm text-gray-600">${r.size}</td>
+                            <td class="p-4 text-sm">${r.months} 個月</td>
+                            <td class="p-4 text-right font-bold text-blue-800">$${r.total}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('size').value = '0';
+            document.getElementById('promo').value = '1';
+            document.getElementById('months').value = '0';
+            document.getElementById('renew').checked = false;
+            calculate();
+        }
+    </script>
+</body>
+</html>
