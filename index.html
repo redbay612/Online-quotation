@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倉位租賃正式報價系統 - 材積版</title>
+    <title>倉位租賃正式報價系統 - 旗艦完整版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --primary: #2c3e50; --accent: #e74c3c; --green: #27ae60; --bg: #f4f7f6; }
@@ -12,7 +12,7 @@
         h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
         .panel { background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .input-row { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
-        .input-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
+        .input-group { display: flex; flex-direction: column; flex: 1; min-width: 250px; }
         label { font-weight: bold; margin-bottom: 5px; font-size: 14px; color: var(--primary); }
         input, select, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
         .cart-list { min-height: 40px; border: 2px dashed #ddd; padding: 10px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
@@ -43,24 +43,21 @@
 <div class="container">
     <h1>倉位租賃正式報價系統</h1>
 
-    <!-- 第一步 -->
     <div class="panel no-print">
-        <div class="section-title">第一步：基本設定與匯入</div>
+        <div class="section-title">第一步：據點選擇與資料匯入</div>
         <div class="input-row">
             <div class="input-group">
                 <label>選擇承租據點</label>
                 <select id="branchSelect">
                     <option value="">-- 請選擇據點 --</option>
                     <optgroup label="北部">
-                        <option>【文山區】文山萬慶倉庫</option><option>【大安區】忠孝東二號倉庫</option><option>【大安區】仁愛二號倉庫</option>
-                        <option>【中正區】南門倉庫</option><option>【中正區】台北車站倉庫</option><option>【中山區】中山倉庫</option>
-                        <option>【中和區】中和威力倉庫</option><option>【三重區】三重光復倉庫</option><option>【新莊區】新莊民安倉庫</option>
+                        <option>【文山區】文山萬慶倉庫</option><option>【大安區】忠孝東二號倉庫</option><option>【大安區】仁愛二號倉庫</option><option>【中正區】南門倉庫</option><option>【中正區】台北車站倉庫</option><option>【南港區】南港興華倉庫</option><option>【南港區】南港北流倉庫</option><option>【南港區】南港車站倉庫</option><option>【內湖區】內湖家樂福倉庫</option><option>【士林區】天母圓環倉庫</option><option>【文山區】文山興隆倉庫</option><option>【文山區】政大倉庫</option><option>【大安區】新生南倉庫</option><option>【松山區】松山倉庫</option><option>【內湖區】東湖二號倉庫</option><option>【內湖區】東湖倉庫</option><option>【士林區】天母廣場倉庫</option><option>【士林區】士林劍潭倉庫</option><option>【士林區】天母德行倉庫</option><option>【大安區】仁愛圓環倉庫</option><option>【大安區】延吉倉庫</option><option>【中山區】中山倉庫</option><option>【中山區】民生松江倉庫</option><option>【中山區】南東倉庫</option><option>【萬華區】西藏倉庫</option><option>【新莊區】新莊民安倉庫</option><option>【淡水區】海洋都心倉庫</option><option>【三重區】蘆洲家樂福倉庫</option><option>【新店區】新店民族倉庫</option><option>【永和區】永和倉庫</option><option>【土城區】土城金城倉庫</option><option>【淡水區】淡水竹圍倉庫</option><option>【新店區】新店倉庫</option><option>【板橋區】板橋府中倉庫</option><option>【中和區】中和威力倉庫</option><option>【三重區】三重光復倉庫</option><option>【三重區】三重湯城倉庫</option><option>【中和區】中和好市多倉庫</option><option>【中和區】中和立德倉庫</option><option>【中和區】中和二號倉庫</option><option>【中和區】中和環球倉庫</option><option>【新莊區】新莊昌隆倉庫</option><option>【仁愛區】基隆北站倉庫</option>
                     </optgroup>
                     <optgroup label="桃竹苗">
-                        <option>【桃園區】桃園經國倉庫</option><option>【中壢區】桃園中壢倉庫</option><option>【東區】新竹中華倉庫</option>
+                        <option>【桃園區】桃園經國倉庫</option><option>【中壢區】桃園中壢倉庫</option><option>【桃園區】桃園中正倉庫</option><option>【桃園區】桃園春日倉庫</option><option>【平鎮區/中壢區】桃園新富倉庫</option><option>【蘆竹區】桃園南崁倉庫</option><option>【東區】新竹中華倉庫</option>
                     </optgroup>
                     <optgroup label="中南部">
-                        <option>【西屯區】台中青海倉庫</option><option>【中西區】台南民生倉庫</option><option>【新興區】高雄復興倉庫</option>
+                        <option>【豐原區】台中豐原倉庫</option><option>【西區】台中中港倉庫</option><option>【西屯區】台中青海倉庫</option><option>【北區/西區】台中英士倉庫</option><option>【西屯區】台中文心倉庫</option><option>【中西區】台南民生倉庫</option><option>【中西區】台南安平倉庫</option><option>【新興區】高雄復興倉庫</option><option>【鳳山區/苓雅區】苓雅中正一倉庫</option><option>【三民區】高雄九如倉庫</option><option>【三民區】高雄博愛倉庫</option>
                     </optgroup>
                 </select>
             </div>
@@ -77,8 +74,8 @@
         </div>
         <div class="input-row">
             <div class="input-group">
-                <label>3. 搜尋並加入倉位 (依編號或材積數)</label>
-                <input type="text" id="searchBox" placeholder="輸入關鍵字如: SU02 或 45" oninput="filterStorage()">
+                <label>3. 搜尋並加入倉位 (號碼或材積)</label>
+                <input type="text" id="searchBox" placeholder="輸入關鍵字..." oninput="filterStorage()">
             </div>
             <div class="input-group">
                 <label>選擇結果</label>
@@ -92,7 +89,7 @@
         <div style="text-align: center;"><button class="btn btn-red" onclick="renderPreview()">確認清單並設定方案</button></div>
     </div>
 
-    <!-- 第二步：詳細方案設定 -->
+    <!-- 第二步 -->
     <div id="preview-area" class="panel no-print" style="display:none;">
         <div class="section-title">第二步：折扣與各別租期設定</div>
         <div class="input-row">
@@ -112,8 +109,8 @@
                     <th>尺寸 / 材積</th>
                     <th>月租原價</th>
                     <th>選擇租期方案</th>
-                    <th>其他/包材費</th>
-                    <th style="background-color: #fff9db;">活動折抵金額 (減免)</th>
+                    <th>其他費用</th>
+                    <th style="background-color: #fff9db;">活動折抵金額 (直接扣除)</th>
                 </tr>
             </thead>
             <tbody id="settle-setup-body"></tbody>
@@ -123,7 +120,7 @@
         </div>
     </div>
 
-    <!-- 第三步：正式報價單 -->
+    <!-- 第三步 -->
     <div id="final-invoice">
         <div class="invoice-header">
             <div>
@@ -157,14 +154,14 @@
                 </tr>
             </tfoot>
         </table>
-        <div id="res-note-area" style="text-align:left; font-size:13px; border:1px solid #ddd; padding:10px; margin-top:10px;">
+        <div id="res-note-area" style="text-align:left; font-size:13px; border:1px solid #ddd; padding:15px; margin-top:10px;">
             <strong>備註說明：</strong><span id="inv-note"></span>
         </div>
         <div style="font-size:11px; color:#666; margin-top:10px; text-align:left;">
-            收費細則：1. 押金規則：季繳(含)以上方案收1個月原價押金；月繳收2個月。 2. 保險費：月租$2999以下收$80；$3000以上收$150。 3. 有效期7天。
+            收費細則：1. 押金規則：季繳(含)以上方案收1個月原價押金；月繳方案收2個月。 2. 保險費：月租$2999以下收$80/月；$3000以上收$150/月。 3. 本報價單有效期限為 7 天。
         </div>
         <div class="no-print" style="margin-top:30px; text-align:right;">
-            <button class="btn btn-blue" onclick="window.print()">列印 / 下載 PDF</button>
+            <button class="btn btn-blue" onclick="window.print()">列印 / 下載 PDF 報價單</button>
         </div>
     </div>
 </div>
@@ -182,14 +179,12 @@
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
-            
             let hIdx = -1;
             for (let i = 0; i < Math.min(rows.length, 10); i++) {
                 const r = rows[i].map(c => String(c || "").trim());
                 if (r.some(c => c.includes("倉位") || c.includes("月租"))) { hIdx = i; break; }
             }
-
-            if (hIdx === -1) return alert("找不到標題列");
+            if (hIdx === -1) return alert("找不到欄位標題");
             const headers = rows[hIdx].map(h => String(h || "").trim());
             const colMap = {
                 no: headers.findIndex(h => h.includes("倉位") || h.includes("編號")),
@@ -197,7 +192,6 @@
                 vol: headers.findIndex(h => h.includes("英尺") || h.includes("材積")),
                 m: headers.findIndex(h => h.includes("月租") || h.includes("月繳"))
             };
-
             db = rows.slice(hIdx + 1).filter(r => r[colMap.m]).map(r => ({
                 no: String(r[colMap.no] || "N/A"),
                 spec: String(r[colMap.spec] || ""),
@@ -205,7 +199,7 @@
                 mPrice: parseFloat(String(r[colMap.m]).replace(/[^\d.]/g, '')) || 0
             }));
             updateSelectOptions(db);
-            alert("匯入成功！已讀取到材積資訊。");
+            alert(`匯入完成！共抓取 ${db.length} 筆資料。`);
         };
         reader.readAsArrayBuffer(file);
     });
@@ -228,7 +222,7 @@
     }
 
     function renderCart() {
-        document.getElementById('cartList').innerHTML = cart.map(i => `<div class="tag">${i.no} (${i.vol}材積)<span onclick="removeCart('${i.no}')" style="margin-left:8px;cursor:pointer;">×</span></div>`).join('');
+        document.getElementById('cartList').innerHTML = cart.map(i => `<div class="tag">${i.no}<span onclick="removeCart('${i.no}')" style="margin-left:8px;cursor:pointer;">×</span></div>`).join('');
     }
 
     function removeCart(no) {
@@ -237,7 +231,7 @@
     }
 
     function renderPreview() {
-        if (cart.length === 0) return alert("清單為空");
+        if (cart.length === 0) return alert("請先加入倉位");
         const body = document.getElementById('settle-setup-body');
         body.innerHTML = cart.map((i, idx) => `
             <tr>
@@ -257,44 +251,32 @@
             </tr>
         `).join('');
         document.getElementById('preview-area').style.display = 'block';
+        window.scrollTo(0, document.getElementById('preview-area').offsetTop);
     }
 
     function generateInvoice() {
         const branch = document.getElementById('branchSelect').value;
-        if (!branch) return alert("請選擇據點");
-
-        const discountRate = parseFloat(document.getElementById('discountRate').value) || 1;
+        if (!branch) return alert("請先選擇承租據點");
+        const discRate = parseFloat(document.getElementById('discountRate').value) || 1;
         const terms = document.querySelectorAll('.cart-term');
         const others = document.querySelectorAll('.cart-other');
         const minuses = document.querySelectorAll('.cart-promo-minus');
-        
-        let html = "";
-        let grandTotal = 0;
-
+        let html = ""; let grandTotal = 0;
         cart.forEach((item, idx) => {
             const months = parseInt(terms[idx].value);
             const otherFee = parseFloat(others[idx].value) || 0;
             const promoMinus = parseFloat(minuses[idx].value) || 0;
-            
             const deposit = (months >= 3) ? item.mPrice : (item.mPrice * 2);
-            const rent = Math.round(item.mPrice * months * discountRate);
+            const rent = Math.round(item.mPrice * months * discRate);
             const insUnit = (item.mPrice < 3000) ? 80 : 150;
             const insTotal = insUnit * months;
             const subtotal = deposit + rent + insTotal + otherFee - promoMinus;
             grandTotal += subtotal;
-
             html += `<tr>
                 <td style="text-align:left;"><strong>${item.no}</strong><br><small>${item.vol}材積 / ${item.spec}</small></td>
-                <td>${termNames[months]}</td>
-                <td>$${deposit.toLocaleString()}</td>
-                <td>$${rent.toLocaleString()}</td>
-                <td>$${insTotal.toLocaleString()}</td>
-                <td>$${otherFee.toLocaleString()}</td>
-                <td class="discount-text">-$${promoMinus.toLocaleString()}</td>
-                <td style="font-weight:bold;">$${subtotal.toLocaleString()}</td>
+                <td>${termNames[months]}</td><td>$${deposit.toLocaleString()}</td><td>$${rent.toLocaleString()}</td><td>$${insTotal.toLocaleString()}</td><td>$${otherFee.toLocaleString()}</td><td class="discount-text">-$${promoMinus.toLocaleString()}</td><td style="font-weight:bold;">$${subtotal.toLocaleString()}</td>
             </tr>`;
         });
-
         document.getElementById('inv-branch').innerText = branch;
         document.getElementById('inv-client').innerText = document.getElementById('clientName').value || "尊貴客戶";
         document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
@@ -302,7 +284,6 @@
         document.getElementById('invoice-body').innerHTML = html;
         document.getElementById('inv-total').innerText = "$ " + grandTotal.toLocaleString();
         document.getElementById('inv-note').innerText = document.getElementById('extraNote').value || "無";
-        
         document.getElementById('final-invoice').style.display = 'block';
         window.scrollTo(0, document.getElementById('final-invoice').offsetTop);
     }
