@@ -3,228 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>收多易迷你倉庫 - 租金計算器</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>倉位租賃正式報價系統 - 修正版</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body { background-color: #f3f7fa; font-family: "Microsoft JhengHei", sans-serif; }
-        .brand-bg { background-color: #1a4571; }
-        .input-focus:focus { border-color: #1a4571; outline: none; ring: 1px #1a4571; }
+        :root { --primary: #2c3e50; --accent: #e74c3c; --green: #27ae60; --bg: #f4f7f6; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); padding: 20px; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        .panel { background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .input-row { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
+        .input-group { display: flex; flex-direction: column; flex: 1; min-width: 250px; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 14px; color: var(--primary); }
+        input, select, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        .cart-list { min-height: 40px; border: 2px dashed #ddd; padding: 10px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .tag { background: #34495e; color: white; padding: 6px 14px; border-radius: 4px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .tag-remove { cursor: pointer; font-weight: bold; }
+        .btn { padding: 10px 22px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-blue { background: #3498db; color: white; }
+        .btn-red { background: #e74c3c; color: white; }
+        .btn-green { background: #27ae60; color: white; }
+        .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 14px; }
+        th { background: #f8f9fa; }
+        .section-title { background: #ecf0f1; padding: 10px; border-left: 5px solid var(--primary); margin: 20px 0 10px; font-weight: bold; }
+        #final-invoice { display: none; border: 2px solid #333; padding: 40px; background: white; margin-top: 30px; }
+        .invoice-header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .total-row { background: #fff5f5; font-size: 1.2em; font-weight: bold; color: var(--accent); }
+        .note-box { margin-top: 20px; font-size: 13px; border-top: 1px solid #eee; padding-top: 10px; text-align: left; }
+        @media print {
+            .no-print, .panel, .btn, h1, #preview-area { display: none !important; }
+            .container { box-shadow: none; border: none; width: 100%; padding: 0; }
+            #final-invoice { display: block !important; border: none; }
+        }
     </style>
 </head>
-<body class="pb-10">
+<body>
 
-    <!-- 頂部藍色區塊 -->
-    <div class="brand-bg w-full h-48 flex justify-center items-center">
-        <div class="bg-white p-2 rounded-lg shadow-lg">
-            <div class="text-center">
-                <div class="text-2xl font-bold text-blue-900 leading-tight">收多易</div>
-                <div class="bg-blue-900 text-white text-xs px-1 tracking-widest">迷你倉庫</div>
+<div class="container">
+    <h1>倉位租賃專業報價系統</h1>
+
+    <!-- 第一步 -->
+    <div class="panel no-print">
+        <div class="section-title">第一步：據點選擇與資料匯入</div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>選擇承租據點</label>
+                <select id="branchSelect">
+                    <option value="">-- 請選擇據點 --</option>
+                    <optgroup label="北部">
+                        <option>【文山區】文山萬慶倉庫</option><option>【大安區】忠孝東二號倉庫</option><option>【大安區】仁愛二號倉庫</option><option>【中正區】南門倉庫</option><option>【中正區】台北車站倉庫</option><option>【南港區】南港興華倉庫</option><option>【南港區】南港北流倉庫</option><option>【南港區】南港車站倉庫</option><option>【內湖區】內湖家樂福倉庫</option><option>【士林區】天母圓環倉庫</option><option>【文山區】文山興隆倉庫</option><option>【文山區】政大倉庫</option><option>【大安區】新生南倉庫</option><option>【松山區】松山倉庫</option><option>【內湖區】東湖二號倉庫</option><option>【內湖區】東湖倉庫</option><option>【士林區】天母廣場倉庫</option><option>【士林區】士林劍潭倉庫</option><option>【士林區】天母德行倉庫</option><option>【大安區】仁愛圓環倉庫</option><option>【大安區】延吉倉庫</option><option>【中山區】中山倉庫</option><option>【中山區】民生松江倉庫</option><option>【中山區】南東倉庫</option><option>【萬華區】西藏倉庫</option><option>【新莊區】新莊民安倉庫</option><option>【淡水區】海洋都心倉庫</option><option>【三重區】蘆洲家樂福倉庫</option><option>【新店區】新店民族倉庫</option><option>【永和區】永和倉庫</option><option>【土城區】土城金城倉庫</option><option>【淡水區】淡水竹圍倉庫</option><option>【新店區】新店倉庫</option><option>【板橋區】板橋府中倉庫</option><option>【中和區】中和威力倉庫</option><option>【三重區】三重光復倉庫</option><option>【三重區】三重湯城倉庫</option><option>【中和區】中和好市多倉庫</option><option>【中和區】中和立德倉庫</option><option>【中和區】中和二號倉庫</option><option>【中和區】中和環球倉庫</option><option>【新莊區】新莊昌隆倉庫</option><option>【仁愛區】基隆北站倉庫</option>
+                    </optgroup>
+                    <optgroup label="桃竹苗">
+                        <option>【桃園區】桃園經國倉庫</option><option>【中壢區】桃園中壢倉庫</option><option>【桃園區】桃園中正倉庫</option><option>【桃園區】桃園春日倉庫</option><option>【平鎮區/中壢區】桃園新富倉庫</option><option>【蘆竹區】桃園南崁倉庫</option><option>【東區】新竹中華倉庫</option>
+                    </optgroup>
+                    <optgroup label="中南部">
+                        <option>【豐原區】台中豐原倉庫</option><option>【西區】台中中港倉庫</option><option>【西屯區】台中青海倉庫</option><option>【北區/西區】台中英士倉庫</option><option>【西屯區】台中文心倉庫</option><option>【中西區】台南民生倉庫</option><option>【中西區】台南安平倉庫</option><option>【新興區】高雄復興倉庫</option><option>【鳳山區/苓雅區】苓雅中正一倉庫</option><option>【三民區】高雄九如倉庫</option><option>【三民區】高雄博愛倉庫</option>
+                    </optgroup>
+                </select>
             </div>
+            <div class="input-group">
+                <label>客戶姓名</label>
+                <input type="text" id="clientName" placeholder="例如：張先生">
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>2. 匯入 Excel 檔案</label>
+                <input type="file" id="fileInput" accept=".xlsx, .xls, .csv">
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>3. 搜尋並選擇倉位</label>
+                <input type="text" id="searchBox" placeholder="搜尋編號或材積..." oninput="filterStorage()">
+            </div>
+            <div class="input-group">
+                <label>選擇結果</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="storageSelect" style="flex: 1;"><option value="">請先讀取檔案</option></select>
+                    <button class="btn btn-blue" onclick="addToCart()">＋加入</button>
+                </div>
+            </div>
+        </div>
+        <label>已選取待結算清單：</label>
+        <div class="cart-list" id="cartList"></div>
+        <div style="text-align: center;"><button class="btn btn-red" onclick="renderPreview()">第一步：查看結算設定</button></div>
+    </div>
+
+    <!-- 第二步 -->
+    <div id="preview-area" class="panel no-print" style="display:none;">
+        <div class="section-title">第二步：折扣與各別租期設定</div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>全案活動折扣 (如 0.9 = 9折)</label>
+                <input type="number" id="discountRate" step="0.01" value="1.0">
+            </div>
+            <div class="input-group" style="flex: 2;">
+                <label>活動與折扣備註說明</label>
+                <input type="text" id="extraNote" placeholder="例如：母親節優惠價、新客優惠...">
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>倉位號碼</th>
+                    <th>尺寸 / 材積</th>
+                    <th>月租原價</th>
+                    <th>選擇租期方案</th>
+                    <th>其他/包材費</th>
+                </tr>
+            </thead>
+            <tbody id="settle-setup-body"></tbody>
+        </table>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn btn-green" onclick="generateInvoice()">產生合併服務報價單</button>
         </div>
     </div>
 
-    <!-- 主容器 -->
-    <div class="max-w-4xl mx-auto -mt-10 px-4">
-        <div class="bg-white rounded-xl shadow-md p-6 md:p-8">
-            
-            <!-- 表單輸入區 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">客戶名稱</label>
-                    <input type="text" id="custName" placeholder="輸入客戶名稱" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">聯繫電話</label>
-                    <input type="text" id="custPhone" placeholder="輸入聯繫電話" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">材積</label>
-                    <select id="size" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
-                        <option value="0">請選擇材積</option>
-                        <option value="1000">小型倉庫 (1000元/月)</option>
-                        <option value="2000">中型倉庫 (2000元/月)</option>
-                        <option value="4000">大型倉庫 (4000元/月)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">優惠方案</label>
-                    <select id="promo" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
-                        <option value="1">請選擇優惠方案</option>
-                        <option value="0.9">年繳 9 折</option>
-                        <option value="0.95">半年繳 95 折</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">承租月份</label>
-                    <select id="months" class="w-full border border-gray-300 rounded-md p-2.5 input-focus">
-                        <option value="0">請選擇月份數</option>
-                        <option value="1">1 個月</option>
-                        <option value="3">3 個月</option>
-                        <option value="6">6 個月</option>
-                        <option value="12">12 個月</option>
-                    </select>
-                </div>
+    <!-- 第三步 -->
+    <div id="final-invoice">
+        <div class="invoice-header">
+            <div>
+                <h2 style="margin:0;">倉位租賃正式服務報價單 (合併)</h2>
+                <p>承租據點：<strong id="inv-branch"></strong></p>
+                <p>客戶姓名：<strong id="inv-client"></strong></p>
             </div>
-
-            <!-- 動態顯示資訊 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t pt-4">
-                <div>
-                    <div class="text-gray-500 text-sm font-bold">保證金</div>
-                    <div class="flex items-center gap-2 mt-1 text-gray-600">
-                        <span id="depositText">未選擇月份</span>
-                        <label class="flex items-center text-xs ml-2 cursor-pointer">
-                            <input type="checkbox" id="renew" class="mr-1"> 續約免付
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <div class="text-gray-500 text-sm font-bold">保險文書處理費</div>
-                    <div class="mt-1 text-gray-600" id="feeText">未選擇月份</div>
-                </div>
-            </div>
-
-            <!-- 小計與按鈕 -->
-            <div class="mt-8 bg-blue-50 rounded-xl p-4 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="bg-[#1a4571] p-3 rounded-lg text-white">
-                        <i class="fa-solid fa-calculator text-xl"></i>
-                    </div>
-                    <div>
-                        <div class="text-gray-500 text-xs">小計金額 (月租金 + 保險費) × 月份 + 保證金</div>
-                        <div class="text-3xl font-bold text-[#1a4571]">$ <span id="totalDisplay">0</span></div>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="resetForm()" class="bg-white border border-gray-300 p-3 rounded-lg hover:bg-gray-50 shadow-sm">
-                        <i class="fa-solid fa-rotate-right text-gray-600"></i>
-                    </button>
-                    <button onclick="saveToHistory()" class="bg-[#1a4571] text-white px-6 py-3 rounded-lg hover:bg-blue-900 shadow-md flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> 保存紀錄
-                    </button>
-                </div>
+            <div style="text-align: right;">
+                <p>報價日期：<span id="inv-date"></span></p>
+                <p>單號：<span id="inv-id"></span></p>
             </div>
         </div>
-
-        <!-- 歷史紀錄表格 -->
-        <div class="mt-8">
-            <div class="flex items-center gap-2 text-gray-700 font-bold mb-4">
-                <i class="fa-solid fa-database"></i> 歷史請款紀錄
-                <span class="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full" id="recordCount">0 筆</span>
-            </div>
-            
-            <div class="bg-white rounded-lg shadow overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-50 text-gray-600 text-sm">
-                        <tr>
-                            <th class="p-4 border-b">日期</th>
-                            <th class="p-4 border-b">客戶名稱</th>
-                            <th class="p-4 border-b">材積/方案</th>
-                            <th class="p-4 border-b">租期</th>
-                            <th class="p-4 border-b text-right">總金額</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyTable" class="text-gray-700">
-                        <!-- 動態插入數據 -->
-                    </tbody>
-                </table>
-                <div id="noData" class="p-10 text-center text-gray-400">暫無數據</div>
-            </div>
+        <table id="final-table">
+            <thead>
+                <tr>
+                    <th>倉位號碼 / 規格</th>
+                    <th>方案</th>
+                    <th>押金 (原價)</th>
+                    <th>預付租金 (活動價)</th>
+                    <th>保險文書處理費</th>
+                    <th>其他費用</th>
+                    <th>小計</th>
+                </tr>
+            </thead>
+            <tbody id="invoice-body"></tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="6" style="text-align: right;">全案應付總金額 (Grand Total)：</td>
+                    <td id="inv-total"></td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="note-box">
+            <p><strong>活動備註：</strong><span id="inv-note"></span></p>
+            <p><strong>收費細則說明：</strong><br>
+            1. 押金：季繳(含)以上方案收一個月原價押金；月繳收兩個月原價押金。<br>
+            2. 保險文書費：月租原價 $2,999 以下收 $80/月；$3,000 以上收 $150/月。<br>
+            3. 本報價單僅供參考，有效期限 7 天。</p>
+        </div>
+        <div class="no-print" style="margin-top:30px; text-align:right;">
+            <button class="btn btn-blue" onclick="window.print()">列印 / 下載 PDF</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // 設定常數
-        const INSURANCE_FEE_PER_MONTH = 100; // 假設每月保險費
-        const DEPOSIT_RATE = 2; // 假設保證金為2個月租金
+<script>
+    let db = [];
+    let cart = [];
+    const termNames = { 1: "月繳", 3: "季繳", 6: "半年繳", 12: "年繳" };
 
-        const inputs = ['size', 'promo', 'months', 'renew'];
-        inputs.forEach(id => {
-            document.getElementById(id).addEventListener('change', calculate);
+    // 檔案讀取
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                
+                // 自動偵測標題列
+                let headerRowIdx = -1;
+                for (let i = 0; i < Math.min(rows.length, 10); i++) {
+                    const r = rows[i].map(c => String(c || "").trim());
+                    if (r.some(c => c.includes("倉位") || c.includes("月租") || c.includes("月繳"))) {
+                        headerRowIdx = i;
+                        break;
+                    }
+                }
+
+                if (headerRowIdx === -1) {
+                    alert("找不到標題列，請確保 Excel 包含「倉位」與「月租表價」。");
+                    return;
+                }
+
+                const headers = rows[headerRowIdx].map(h => String(h || "").trim());
+                const colMap = {
+                    no: headers.findIndex(h => h.includes("倉位") || h.includes("編號")),
+                    spec: headers.findIndex(h => h.includes("尺寸") || h.includes("W*L*H")),
+                    vol: headers.findIndex(h => h.includes("英尺") || h.includes("材積")),
+                    m: headers.findIndex(h => h.includes("月租") || h.includes("月繳"))
+                };
+
+                db = rows.slice(headerRowIdx + 1).filter(r => r[colMap.m]).map(r => {
+                    const cleanNum = (v) => parseFloat(String(v || 0).replace(/[^\d.]/g, '')) || 0;
+                    return {
+                        no: String(r[colMap.no] || "N/A"),
+                        spec: String(r[colMap.spec] || ""),
+                        vol: String(r[colMap.vol] || "0"),
+                        mPrice: cleanNum(r[colMap.m])
+                    };
+                });
+
+                updateSelectOptions(db);
+                alert("匯入成功，共 " + db.length + " 筆資料。");
+                document.getElementById('fileInput').value = '';
+            } catch (err) {
+                alert("讀取出錯：" + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    function filterStorage() {
+        const key = document.getElementById('searchBox').value.toLowerCase();
+        updateSelectOptions(db.filter(i => i.no.toLowerCase().includes(key) || i.vol.includes(key)));
+    }
+
+    function updateSelectOptions(items) {
+        const s = document.getElementById('storageSelect');
+        s.innerHTML = items.map(i => `<option value="${i.no}">[${i.no}] ${i.vol}ft³ (${i.spec})</option>`).join('');
+    }
+
+    function addToCart() {
+        const no = document.getElementById('storageSelect').value;
+        if (!no || cart.find(i => i.no === no)) return;
+        const item = db.find(i => i.no === no);
+        if (item) { cart.push(item); renderCart(); }
+    }
+
+    function renderCart() {
+        document.getElementById('cartList').innerHTML = cart.map(i => `<div class="tag">${i.no}<span onclick="removeCart('${i.no}')" style="margin-left:8px;cursor:pointer;">×</span></div>`).join('');
+    }
+
+    function removeCart(no) {
+        cart = cart.filter(i => i.no !== no);
+        renderCart();
+    }
+
+    // 顯示預覽設定
+    function renderPreview() {
+        if (cart.length === 0) return alert("清單是空的");
+        const body = document.getElementById('settle-setup-body');
+        body.innerHTML = cart.map((i, idx) => `
+            <tr>
+                <td><strong>${i.no}</strong></td>
+                <td style="font-size:12px;">${i.vol} ft³ / ${i.spec}</td>
+                <td>$${i.mPrice.toLocaleString()}</td>
+                <td>
+                    <select class="cart-term">
+                        <option value="1">月繳</option>
+                        <option value="3" selected>季繳</option>
+                        <option value="6">半年繳</option>
+                        <option value="12">年繳</option>
+                    </select>
+                </td>
+                <td><input type="number" class="cart-other" value="0" style="width:80px"></td>
+            </tr>
+        `).join('');
+        document.getElementById('preview-area').style.display = 'block';
+        window.scrollTo(0, document.getElementById('preview-area').offsetTop);
+    }
+
+    // 正式報價單產生
+    function generateInvoice() {
+        const branch = document.getElementById('branchSelect').value;
+        if (!branch) { alert("請先選擇承租據點"); return; }
+
+        const discount = parseFloat(document.getElementById('discountRate').value) || 1;
+        const terms = document.querySelectorAll('.cart-term');
+        const others = document.querySelectorAll('.cart-other');
+        
+        let html = "";
+        let grandTotal = 0;
+
+        cart.forEach((item, idx) => {
+            const months = parseInt(terms[idx].value);
+            const otherFee = parseFloat(others[idx].value) || 0;
+            
+            // 費用計算
+            const deposit = (months >= 3) ? item.mPrice : (item.mPrice * 2);
+            const rent = Math.round(item.mPrice * months * discount);
+            const insUnit = (item.mPrice < 3000) ? 80 : 150;
+            const insTotal = insUnit * months;
+            const subtotal = deposit + rent + insTotal + otherFee;
+            
+            grandTotal += subtotal;
+
+            html += `
+                <tr>
+                    <td style="text-align:left;"><strong>${item.no}</strong><br><small>${item.vol}ft³ / ${item.spec}</small></td>
+                    <td>${termNames[months]}</td>
+                    <td>$${deposit.toLocaleString()}</td>
+                    <td>$${rent.toLocaleString()}</td>
+                    <td>$${insTotal.toLocaleString()}</td>
+                    <td>$${otherFee.toLocaleString()}</td>
+                    <td style="font-weight:bold;">$${subtotal.toLocaleString()}</td>
+                </tr>
+            `;
         });
 
-        function calculate() {
-            const sizePrice = parseFloat(document.getElementById('size').value);
-            const promoRate = parseFloat(document.getElementById('promo').value);
-            const months = parseInt(document.getElementById('months').value);
-            const renew = document.getElementById('renew').checked;
-
-            if (sizePrice === 0 || months === 0) {
-                updateUI(0, 0, 0);
-                return;
-            }
-
-            // 計算邏輯
-            const monthlyRent = sizePrice * promoRate;
-            const totalInsurance = INSURANCE_FEE_PER_MONTH * months;
-            const deposit = renew ? 0 : (sizePrice * DEPOSIT_RATE);
-            const total = (monthlyRent * months) + totalInsurance + deposit;
-
-            updateUI(total, deposit, totalInsurance);
-        }
-
-        function updateUI(total, deposit, insurance) {
-            document.getElementById('totalDisplay').innerText = total.toLocaleString();
-            document.getElementById('depositText').innerText = deposit > 0 ? `$${deposit.toLocaleString()}` : (deposit === 0 && document.getElementById('renew').checked ? '續約免付' : '未選擇月份');
-            document.getElementById('feeText').innerText = insurance > 0 ? `$${insurance.toLocaleString()}` : '未選擇月份';
-        }
-
-        let records = [];
-        function saveToHistory() {
-            const name = document.getElementById('custName').value;
-            const total = document.getElementById('totalDisplay').innerText;
-            const size = document.getElementById('size').options[document.getElementById('size').selectedIndex].text;
-            const months = document.getElementById('months').value;
-
-            if (!name || total === '0') {
-                alert('請完整填寫客戶名稱與選擇租賃條件');
-                return;
-            }
-
-            const now = new Date().toLocaleDateString();
-            const newRecord = { date: now, name, size, months, total };
-            records.unshift(newRecord); // 新增在最前面
-
-            renderTable();
-            resetForm();
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('historyTable');
-            const noData = document.getElementById('noData');
-            const count = document.getElementById('recordCount');
-            
-            tbody.innerHTML = '';
-            count.innerText = `${records.length} 筆`;
-
-            if (records.length === 0) {
-                noData.classList.remove('hidden');
-            } else {
-                noData.classList.add('hidden');
-                records.forEach(r => {
-                    const row = `
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-4 text-sm text-gray-500">${r.date}</td>
-                            <td class="p-4 font-medium">${r.name}</td>
-                            <td class="p-4 text-sm text-gray-600">${r.size}</td>
-                            <td class="p-4 text-sm">${r.months} 個月</td>
-                            <td class="p-4 text-right font-bold text-blue-800">$${r.total}</td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            }
-        }
-
-        function resetForm() {
-            document.getElementById('custName').value = '';
-            document.getElementById('custPhone').value = '';
-            document.getElementById('size').value = '0';
-            document.getElementById('promo').value = '1';
-            document.getElementById('months').value = '0';
-            document.getElementById('renew').checked = false;
-            calculate();
-        }
-    </script>
+        document.getElementById('inv-branch').innerText = branch;
+        document.getElementById('inv-client').innerText = document.getElementById('clientName').value || "尊貴客戶";
+        document.getElementById('inv-date').innerText = new Date().toLocaleDateString();
+        document.getElementById('inv-id').innerText = "QT-" + Date.now().toString().slice(-6);
+        document.getElementById('invoice-body').innerHTML = html;
+        document.getElementById('inv-total').innerText = "$ " + grandTotal.toLocaleString();
+        document.getElementById('inv-note').innerText = document.getElementById('extraNote').value || "無";
+        
+        document.getElementById('final-invoice').style.display = 'block';
+        window.scrollTo(0, document.getElementById('final-invoice').offsetTop);
+    }
+</script>
 </body>
 </html>
