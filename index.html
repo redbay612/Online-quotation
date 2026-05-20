@@ -3,45 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>收多易迷你倉庫報價系統</title>
-    <!-- 引入 SheetJS 用於專業 Excel 處理 -->
+    <title>收多易迷你倉庫報價系統 - 修正版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --primary: #000080; --accent: #e74c3c; --green: #27ae60; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); padding: 20px; color: #333; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* 操作面板樣式 */
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
         .panel { background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .input-row { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
         .input-group { display: flex; flex-direction: column; flex: 1; min-width: 240px; }
         label { font-weight: bold; margin-bottom: 5px; font-size: 14px; color: var(--primary); }
         input, select, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        
         .tag-box { min-height: 40px; border: 2px dashed #ddd; padding: 10px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
         .tag { background: #34495e; color: white; padding: 6px 14px; border-radius: 4px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
         .tag-remove { cursor: pointer; font-weight: bold; }
-
         .btn { padding: 10px 22px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .btn-blue { background: #3498db; color: white; }
         .btn-red { background: #e74c3c; color: white; }
         .btn-green { background: #27ae60; color: white; }
+        .btn-purple { background: #9b59b6; color: white; padding: 5px 12px; font-size: 12px; }
         .btn:hover { opacity: 0.8; transform: translateY(-1px); }
-
         table { width: 100%; border-collapse: collapse; margin: 15px 0; background: #fff; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 13px; }
         th { background: #f8f9fa; }
         .section-title { background: #ecf0f1; padding: 10px; border-left: 5px solid var(--primary); margin: 20px 0 10px; font-weight: bold; }
-
-        /* 正式報價單樣式 */
-        #final-invoice { display: none; border: 2px solid #333; padding: 40px; background: white; margin-top: 30px; }
-        .quote-header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--primary); padding-bottom: 15px; }
+        #final-invoice { display: none; border: 2px solid #333; padding: 40px; background: white; margin-top: 30px; position: relative; }
+        .quote-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        .logo-box img { height: 80px; width: auto; display: block; }
         .quote-title { font-size: 28px; font-weight: bold; color: #000; margin: 0; }
-        
-        .info-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 15px; margin-bottom: 20px; font-size: 14px; text-align: left; }
-        .total-row { background: #fff5f5; font-size: 1.2em; font-weight: bold; color: var(--accent); }
-        .official-note { margin-top: 25px; font-size: 13px; text-align: left; line-height: 1.8; border-top: 2px solid #333; padding-top: 15px; }
-
+        .info-grid { display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 15px; text-align: left; }
+        .total-row { background: #fff5f5; font-size: 1.25em; font-weight: bold; color: var(--accent); }
+        .official-note { margin-top: 30px; font-size: 13px; text-align: left; line-height: 1.8; border-top: 2px solid #333; padding-top: 15px; }
         @media print {
             .no-print, .panel, .btn, #preview-area { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; padding: 0; }
@@ -52,9 +45,8 @@
 <body>
 
 <div class="container">
-    <h1 class="no-print" style="text-align: center; color: var(--primary);">收多易迷你倉庫自動報價系統</h1>
+    <h1 class="no-print">收多易迷你倉庫自動報價系統</h1>
 
-    <!-- 1. 設定面板 -->
     <div class="panel no-print">
         <div class="section-title">第一步：據點與客戶設定</div>
         <div class="input-row">
@@ -68,22 +60,22 @@
             </div>
             <div class="input-group">
                 <label>客戶電話</label>
-                <input type="text" id="clientPhone" placeholder="例如：0900-000-000">
+                <input type="text" id="clientPhone" placeholder="例如：0912-345-678">
             </div>
         </div>
         <div class="input-row">
             <div class="input-group">
-                <label>匯入 Excel 檔案 (包含 倉位/尺寸/立方英尺/月租表價)</label>
+                <label>匯入 Excel 檔案 (倉位/尺寸/立方英尺/月租)</label>
                 <input type="file" id="fileInput" accept=".xlsx, .xls, .csv">
             </div>
         </div>
         <div class="input-row">
             <div class="input-group" style="flex:1">
                 <label>搜尋倉位 (編號或材積)</label>
-                <input type="text" id="searchBox" placeholder="搜尋關鍵字..." oninput="filterStorage()">
+                <input type="text" id="searchBox" placeholder="輸入關鍵字..." oninput="filterStorage()">
             </div>
             <div class="input-group" style="flex:2">
-                <label>選擇結果加入清單</label>
+                <label>選擇倉位並加入</label>
                 <div style="display: flex; gap: 5px;">
                     <select id="storageSelect" style="flex:1"><option>請先匯入檔案</option></select>
                     <button class="btn btn-blue" onclick="addToCart()">＋加入</button>
@@ -91,20 +83,19 @@
             </div>
         </div>
         <div class="tag-box" id="cartList"></div>
-        <div style="text-align: center;"><button class="btn btn-red" onclick="renderPreview()">確認清單並設定方案</button></div>
+        <div style="text-align: center;"><button class="btn btn-red" onclick="renderPreview()">下一步：設定租期方案</button></div>
     </div>
 
-    <!-- 2. 二次設定區 -->
     <div id="preview-area" class="panel no-print" style="display:none;">
-        <div class="section-title">第二步：個別倉位租期與折抵設定</div>
+        <div class="section-title">第二步：折扣與個別租期設定</div>
         <div class="input-row">
             <div class="input-group">
-                <label>全案活動折扣 (如 0.9 = 9折 / 1.0 = 原價)</label>
+                <label>全案活動折扣 (如 0.9 = 9折)</label>
                 <input type="number" id="discountRate" step="0.01" value="1.0">
             </div>
             <div class="input-group" style="flex: 2;">
-                <label>活動與專案說明</label>
-                <input type="text" id="extraNote" placeholder="例如：新春特惠方案">
+                <label>活動專案備註</label>
+                <input type="text" id="extraNote" placeholder="例如：母親節優惠方案">
             </div>
         </div>
         <table>
@@ -115,19 +106,22 @@
                     <th>月租原價</th>
                     <th>租期選擇</th>
                     <th>其他/包材費</th>
-                    <th>活動折抵金額</th>
+                    <th>活動折抵</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody id="settle-setup-body"></tbody>
         </table>
         <div style="text-align: center; margin-top: 20px;">
-            <button class="btn btn-green" onclick="generateInvoice()">產生正式報價單</button>
+            <button class="btn btn-green" onclick="generateInvoice()">產生正式合併報價單</button>
         </div>
     </div>
 
-    <!-- 3. 正式報價單 (PDF/列印格式) -->
     <div id="final-invoice">
         <div class="quote-header">
+            <div class="logo-box">
+                <img src="data:image/png;base64,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" alt="收多易 Logo">
+            </div>
             <div class="quote-title">收多易迷你倉庫報價單</div>
         </div>
 
@@ -150,7 +144,7 @@
             <thead>
                 <tr>
                     <th width="25%">倉位號碼 / 規格</th>
-                    <th>租期</th>
+                    <th width="10%">租期方案</th>
                     <th>押金 (原價)</th>
                     <th>預付租金 (活動價)</th>
                     <th>保險文書處理費</th>
@@ -160,9 +154,9 @@
                 </tr>
             </thead>
             <tbody id="invoice-body"></tbody>
-            <tfoot>
+            <tfoot id="total-footer">
                 <tr class="total-row">
-                    <td colspan="7" style="text-align: right;">全案應付總金額 (Grand Total)：</td>
+                    <td colspan="7" style="text-align: right;">應付總金額 (Grand Total)：</td>
                     <td id="inv-total"></td>
                 </tr>
             </tfoot>
@@ -180,12 +174,13 @@
 
         <div class="no-print" style="margin-top:30px; text-align:right; gap: 10px; display: flex; justify-content: flex-end;">
             <button class="btn btn-blue" onclick="window.print()">列印 / 下載 PDF</button>
-            <button class="btn btn-green" onclick="exportExcel()">匯出美化版 Excel</button>
+            <button class="btn btn-green" onclick="exportExcel()">匯出正確排版 Excel</button>
         </div>
     </div>
 </div>
 
 <script>
+    // 據點資料更新 (地址已包含新店、民族、松山最新修正)
     const branches = {
         "【文山區】文山萬慶倉庫": "台北市文山區萬慶街37號B1", "【大安區】忠孝東二號倉庫": "台北市大安區忠孝東路四段162號12樓",
         "【大安區】仁愛二號倉庫": "台北市大安區仁愛路四段37號11樓", "【中正區】南門倉庫": "台北市中正區羅斯福路二段102號B1",
@@ -201,9 +196,9 @@
         "【中山區】民生松江倉庫": "台北市中山區民生東路二段143號8樓", "【中山區】南東倉庫": "台北市中山區南京東路五段2號B1",
         "【萬華區】西藏倉庫": "台北市萬華區西藏路125巷2號B1", "【新莊區】新莊民安倉庫": "新北市新莊區民安西路378號",
         "【淡水區】海洋都心倉庫": "新北市淡水區義山路二段226號B1", "【三重區】蘆洲家樂福倉庫": "新北市三重區五華街282號4樓",
-        "【新店區】新店民族倉庫": "新北市新店區民族路115號B1", "【永和區】永和倉庫": "新北市永和區永和路二段201號B1",
+        "【新店區】新店民族倉庫": "新北市新店區民族路71號B1", "【永和區】永和倉庫": "新北市永和區永和路二段201號B1",
         "【土城區】土城金城倉庫": "新北市土城區金城路三段12號B1", "【淡水區】淡水竹圍倉庫": "新北市淡水區民權路187號B1",
-        "【新店區】新店倉庫": "新北市新店區北新路三段207號B1", "【板橋區】板橋府中倉庫": "新北市板橋區府中路29-2號B1",
+        "【新店區】新店倉庫": "新北市新店區民權路108號B1", "【板橋區】板橋府中倉庫": "新北市板橋區府中路29-2號B1",
         "【中和區】中和威力倉庫": "新北市中和區中山路二段291號B1", "【三重區】三重光復倉庫": "新北市三重區光復路288號",
         "【三重區】三重湯城倉庫": "新北市三重區重新路五段609巷10號B1", "【中和區】中和好市多倉庫": "新北市中和區板南路496號B1",
         "【中和區】中和立德倉庫": "新北市中和區立德街200巷10號B1", "【中和區】中和二號倉庫": "新北市中和區中山路二段351號B1",
@@ -238,7 +233,7 @@
             let hIdx = rows.findIndex(r => r.some(c => String(c).includes("倉位")));
             if (hIdx === -1) return alert("找不到標題列");
             const head = rows[hIdx].map(h => String(h).trim());
-            const col = { no: head.findIndex(h => h === "倉位" || h.includes("編號")), spec: head.findIndex(h => h.includes("尺寸")), vol: head.findIndex(h => h.includes("英尺") || h.includes("材積")), m: head.findIndex(h => h.includes("月租")) };
+            const col = { no: head.findIndex(h => h === "倉位" || h.includes("編號")), spec: head.findIndex(h => h.includes("尺寸")), vol: head.findIndex(h => h.includes("材積") || h.includes("英尺")), m: head.findIndex(h => h.includes("月租")) };
             db = rows.slice(hIdx + 1).filter(r => r[col.m]).map(r => ({ no: String(r[col.no] || "N/A"), spec: String(r[col.spec] || ""), vol: String(r[col.vol] || "0"), mPrice: parseFloat(String(r[col.m]).replace(/[^\d.]/g, '')) || 0 }));
             updateSelect(db); alert("匯入成功！");
         };
@@ -247,43 +242,51 @@
 
     function filterStorage() { const key = document.getElementById('searchBox').value.toLowerCase(); updateSelect(db.filter(i => i.no.toLowerCase().includes(key) || i.vol.includes(key))); }
     function updateSelect(items) { const s = document.getElementById('storageSelect'); s.innerHTML = items.map(i => `<option value="${i.no}">[${i.no}] ${i.vol}材積 (${i.spec})</option>`).join(''); }
-    function addToCart() { const no = document.getElementById('storageSelect').value; if (!no || cart.find(i => i.no === no)) return; const item = db.find(i => i.no === no); if (item) { cart.push(item); renderCart(); } }
-    function renderCart() { document.getElementById('cartList').innerHTML = cart.map(i => `<div class="tag">${i.no}<span class="tag-remove" onclick="removeCart('${i.no}')">×</span></div>`).join(''); }
-    function removeCart(no) { cart = cart.filter(i => i.no !== no); renderCart(); }
+    function addToCart() { const no = document.getElementById('storageSelect').value; if (!no || cart.find(i => i.no === no)) return; const item = db.find(i => i.no === no); if (item) { cart.push({...item, uId: Date.now() + Math.random()}); renderCart(); } }
+    function renderCart() { document.getElementById('cartList').innerHTML = cart.map(i => `<div class="tag">${i.no} (${i.vol}材積)<span class="tag-remove" onclick="removeByUId(${i.uId})">×</span></div>`).join(''); }
+    function removeByUId(uId) { cart = cart.filter(i => i.uId !== uId); renderCart(); if (document.getElementById('preview-area').style.display === 'block') renderPreview(); }
 
     function renderPreview() {
         if (cart.length === 0) return alert("清單為空");
         const body = document.getElementById('settle-setup-body');
         body.innerHTML = cart.map((i, idx) => `
-            <tr>
+            <tr class="setup-row" data-no="${i.no}" data-mprice="${i.mPrice}" data-vol="${i.vol}" data-spec="${i.spec}">
                 <td><strong>${i.no}</strong></td><td>${i.vol} 材積 / ${i.spec}</td><td>$${i.mPrice.toLocaleString()}</td>
                 <td><select class="cart-term"><option value="1">月繳</option><option value="3" selected>季繳</option><option value="6">半年繳</option><option value="12">年繳</option></select></td>
                 <td><input type="number" class="cart-other" value="0" style="width:70px"></td>
                 <td><input type="number" class="cart-promo-minus" value="0" style="width:80px"></td>
+                <td><button class="btn btn-purple" onclick="duplicateRow('${i.no}')">＋增加方案</button> <button class="btn btn-purple" style="background:#888" onclick="removeByUId(${i.uId})">刪除</button></td>
             </tr>
         `).join('');
         document.getElementById('preview-area').style.display = 'block';
+    }
+
+    function duplicateRow(no) {
+        const item = db.find(i => i.no === no);
+        if (item) { cart.push({...item, uId: Date.now() + Math.random()}); renderPreview(); }
     }
 
     function generateInvoice() {
         const bName = document.getElementById('branchSelect').value;
         if (!bName) return alert("請先選擇據點");
         const discRate = parseFloat(document.getElementById('discountRate').value) || 1;
-        const terms = document.querySelectorAll('.cart-term');
-        const others = document.querySelectorAll('.cart-other');
-        const minuses = document.querySelectorAll('.cart-promo-minus');
-        let html = ""; let grandTotal = 0;
+        const rows = document.querySelectorAll('.setup-row');
+        let html = ""; let grandTotal = 0; let cabinNumbers = [];
 
-        cart.forEach((item, idx) => {
-            const months = parseInt(terms[idx].value);
-            const otherFee = parseFloat(others[idx].value) || 0;
-            const promoMinus = parseFloat(minuses[idx].value) || 0;
-            const deposit = (months >= 3) ? item.mPrice : (item.mPrice * 2);
-            const rent = Math.round(item.mPrice * months * discRate);
-            const insTotal = ((item.mPrice < 3000) ? 80 : 150) * months;
+        rows.forEach((row) => {
+            const cabinNo = row.dataset.no; cabinNumbers.push(cabinNo);
+            const mPrice = parseFloat(row.dataset.mprice);
+            const months = parseInt(row.querySelector('.cart-term').value);
+            const otherFee = parseFloat(row.querySelector('.cart-other').value) || 0;
+            const promoMinus = parseFloat(row.querySelector('.cart-promo-minus').value) || 0;
+            
+            const deposit = (months >= 3) ? mPrice : (mPrice * 2);
+            const rent = Math.round(mPrice * months * discRate);
+            const insTotal = ((mPrice < 3000) ? 80 : 150) * months;
             const subtotal = deposit + rent + insTotal + otherFee - promoMinus;
             grandTotal += subtotal;
-            html += `<tr><td style="text-align:left;"><strong>${item.no}</strong><br><small>${item.vol}材積 / ${item.spec}</small></td><td>${termNames[months]}</td><td>$${deposit.toLocaleString()}</td><td>$${rent.toLocaleString()}</td><td>$${insTotal.toLocaleString()}</td><td>$${otherFee.toLocaleString()}</td><td style="color:red">-$${promoMinus.toLocaleString()}</td><td style="font-weight:bold;">$${subtotal.toLocaleString()}</td></tr>`;
+
+            html += `<tr><td><strong>${cabinNo}</strong><br><small>${row.dataset.vol}材積 / ${row.dataset.spec}</small></td><td>${termNames[months]}</td><td>$${deposit.toLocaleString()}</td><td>$${rent.toLocaleString()}</td><td>$${insTotal.toLocaleString()}</td><td>$${otherFee.toLocaleString()}</td><td style="color:red">-$${promoMinus.toLocaleString()}</td><td style="font-weight:bold;">$${subtotal.toLocaleString()}</td></tr>`;
         });
 
         document.getElementById('inv-branch').innerText = bName;
@@ -296,11 +299,14 @@
         document.getElementById('inv-total').innerText = "$ " + grandTotal.toLocaleString();
         document.getElementById('inv-note-text').innerText = document.getElementById('extraNote').value || "無";
         
+        // 智慧判定：若有重複倉位號碼，不顯示總計
+        const isComparison = new Set(cabinNumbers).size < cabinNumbers.length;
+        document.getElementById('total-footer').style.display = isComparison ? 'none' : 'table-footer-group';
+
         document.getElementById('final-invoice').style.display = 'block';
         window.scrollTo({ top: document.getElementById('final-invoice').offsetTop, behavior: 'smooth' });
     }
 
-    // 專業 Excel 匯出功能 (手動構建版面)
     function exportExcel() {
         const client = document.getElementById('clientName').value || "客戶";
         const bName = document.getElementById('branchSelect').value;
@@ -310,52 +316,28 @@
         const id = document.getElementById('inv-id').innerText;
         const promo = document.getElementById('extraNote').value || "無";
 
-        // 建立 Excel AOA (陣列中陣列) 結構
         const aoa = [
-            ["收多易迷你倉庫報價單"],
-            [],
+            ["收多易迷你倉庫報價單"], [],
             ["據點：", bName, "", "客戶姓名：", client, "", "報價日期：", date],
-            ["據點地址：", addr, "", "聯絡電話：", phone, "", "報價單號：", id],
-            [],
+            ["據點地址：", addr, "", "聯絡電話：", phone, "", "報價單號：", id], [],
             ["倉位號碼 / 規格", "租期方案", "押金 (原價)", "預付租金 (活動價)", "保險文書處理費", "其他/包材費", "活動折抵", "小計"]
         ];
 
-        // 抓取報價單內容
-        const rows = document.querySelectorAll("#invoice-body tr");
-        rows.forEach(tr => {
+        document.querySelectorAll("#invoice-body tr").forEach(tr => {
             const cols = tr.querySelectorAll("td");
-            aoa.push([
-                cols[0].innerText.replace("\n", " "), // 倉位號碼與規格合併為一行
-                cols[1].innerText,
-                parseFloat(cols[2].innerText.replace(/[^\d.-]/g, '')),
-                parseFloat(cols[3].innerText.replace(/[^\d.-]/g, '')),
-                parseFloat(cols[4].innerText.replace(/[^\d.-]/g, '')),
-                parseFloat(cols[5].innerText.replace(/[^\d.-]/g, '')),
-                parseFloat(cols[6].innerText.replace(/[^\d.-]/g, '')),
-                parseFloat(cols[7].innerText.replace(/[^\d.-]/g, ''))
-            ]);
+            aoa.push([cols[0].innerText.replace("\n", " "), cols[1].innerText, parseFloat(cols[2].innerText.replace(/[^\d.-]/g, '')), parseFloat(cols[3].innerText.replace(/[^\d.-]/g, '')), parseFloat(cols[4].innerText.replace(/[^\d.-]/g, '')), parseFloat(cols[5].innerText.replace(/[^\d.-]/g, '')), parseFloat(cols[6].innerText.replace(/[^\d.-]/g, '')), parseFloat(cols[7].innerText.replace(/[^\d.-]/g, ''))]);
         });
 
-        const grandTotal = document.getElementById('inv-total').innerText.replace(/[^\d.-]/g, '');
-        aoa.push(["", "", "", "", "", "", "應付總金額：", parseFloat(grandTotal)]);
-        aoa.push([]);
-        aoa.push(["活動專案：", promo]);
-        aoa.push(["備註說明："]);
-        aoa.push(["1. 辦公時間: 週一~週五 10:00AM~07:00PM。"]);
-        aoa.push(["2. 季繳以上，簽約時需押一個月押金(原價)；季繳以下，簽約時需押兩個月押金(原價)。"]);
-        aoa.push(["3. 保險文書處理費 (月租金NT$2999以下每月加收$NT$80; 月租金$3000以上每月加收NT$150)。"]);
-        aoa.push(["4. 付款方式: 轉帳。"]);
-        aoa.push(["5. 個人用戶簽約請帶: 雙證件及悠遊卡乙張；公司用戶簽約請帶: 設立登記表影本、公司大小章、負責人雙證件、悠遊卡兩張。"]);
+        if (document.getElementById('total-footer').style.display !== 'none') {
+            aoa.push(["", "", "", "", "", "", "應付總金額：", parseFloat(document.getElementById('inv-total').innerText.replace(/[^\d.-]/g, ''))]);
+        }
+
+        aoa.push([], ["活動專案：", promo], ["備註說明："], ["1. 辦公時間: 週一~週五 10:00AM~07:00PM。"], ["2. 季繳以上方案收1個月原價押金；季繳以下收2個月。"], ["3. 保險文書費：月租$2999以下收$80/月；$3000以上收$150/月。"], ["4. 付款方式: 轉帳。"], ["5. 個人簽約攜帶雙證件+悠遊卡；公司簽約攜帶登記表影本+大小章+負責人證件+悠遊卡。"]);
 
         const ws = XLSX.utils.aoa_to_sheet(aoa);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "收多易報價單");
-
-        // 設定 Excel 欄位寬度
-        ws['!cols'] = [
-            {wch: 35}, {wch: 10}, {wch: 12}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 12}, {wch: 12}
-        ];
-
+        XLSX.utils.book_append_sheet(wb, ws, "報價單");
+        ws['!cols'] = [{wch:35}, {wch:10}, {wch:12}, {wch:15}, {wch:15}, {wch:12}, {wch:12}, {wch:12}];
         XLSX.writeFile(wb, `收多易報價單_${client}.xlsx`);
     }
 </script>
